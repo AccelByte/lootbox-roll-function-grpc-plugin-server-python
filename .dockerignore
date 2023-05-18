@@ -1,0 +1,5 @@
+.env
+Dockerfile
+Makefile
+venv/
+venv-dev/
