@@ -74,4 +74,4 @@ help:
 
 run:
 	docker run --rm -t -u $$(id -u):$$(id -g) -v $$(pwd):/data -w /data -e PIP_CACHE_DIR=/data/.cache/pip --entrypoint /bin/sh python:3.9-slim \
-			-c 'PYTHONPATH=${SOURCE_DIR}:${PROTO_DIR} GRPC_VERBOSITY=debug ${VENV_DIR}/bin/python -m app --enable_reflection'
+			-c 'PYTHONPATH=${SOURCE_DIR}:${PROTO_DIR} GRPC_VERBOSITY=debug ${VENV_DIR}/bin/python -m app'

@@ -18,7 +18,8 @@ from app.proto.lootbox_pb2 import (
 from app.proto.lootbox_pb2_grpc import LootBoxServicer
 
 class AsyncLootBoxService(LootBoxServicer):
-    
+    full_name: str = DESCRIPTOR.services_by_name["LootBox"].full_name
+
     def __init__(self, logger: Optional[Logger]) -> None:
         self.logger = (
             logger if logger is not None else getLogger(self.__class__.__name__)
