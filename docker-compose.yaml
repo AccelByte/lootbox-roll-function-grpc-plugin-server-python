@@ -21,7 +21,7 @@ services:
       - OTEL_TRACES_EXPORTER=zipkin
       - OTEL_METRICS_EXPORTER=none
       - OTEL_SERVICE_NAME=custom_lootbox_roll_function_server_python
-      # - OTEL_PROPAGATORS=b3multi                                                          # TODO: fix this
+      - OTEL_PROPAGATORS=b3multi
     logging:
       driver: loki
       options:

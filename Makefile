@@ -51,27 +51,3 @@ imagex_push:
 	docker buildx inspect $(BUILDER) || docker buildx create --name $(BUILDER) --use
 	docker buildx build -t ${IMAGE_PREFIX}${IMAGE_NAME}:${IMAGE_VERSION} --platform linux/arm64/v8,linux/amd64 --push .
 	docker buildx rm --keep-state $(BUILDER)
-
-lint:
-	rm -f lint.err
-	docker run --rm -t -u $$(id -u):$$(id -g) -v $$(pwd):/data -w /data -e PIP_CACHE_DIR=/data/.cache/pip -e PYLINTHOME=/data/.cache/pylint  --entrypoint /bin/sh python:3.9-slim \
-			-c 'PYTHONPATH=${TESTS_DIR}:${SOURCE_DIR}:${PROTO_DIR} ${VENV_DEV_DIR}/bin/python -m pylint -j 0 app || exit $$(( $$? & (1+2+32) ))' \
-					|| touch lint.err
-	[ ! -f lint.err ]
-
-beautify:
-	docker run -t --rm -u $$(id -u):$$(id -g) -v $$(pwd):/data/ -w /data/ cytopia/black:22-py3.9 \
-		${SOURCE_DIR} \
-		${TESTS_DIR}
-
-test:
-	docker run --rm -t -u $$(id -u):$$(id -g) -v $$(pwd):/data -w /data -e PIP_CACHE_DIR=/data/.cache/pip --entrypoint /bin/sh python:3.9-slim \
-			-c 'PYTHONPATH=${TESTS_DIR}:${SOURCE_DIR}:${PROTO_DIR} ${VENV_DEV_DIR}/bin/python -m app_tests'
-
-help:
-	docker run --rm -t -u $$(id -u):$$(id -g) -v $$(pwd):/data -w /data -e PIP_CACHE_DIR=/data/.cache/pip --entrypoint /bin/sh python:3.9-slim \
-			-c 'PYTHONPATH=${SOURCE_DIR}:${PROTO_DIR} ${VENV_DIR}/bin/python -m app --help'
-
-run:
-	docker run --rm -t -u $$(id -u):$$(id -g) -v $$(pwd):/data -w /data -e PIP_CACHE_DIR=/data/.cache/pip --entrypoint /bin/sh python:3.9-slim \
-			-c 'PYTHONPATH=${SOURCE_DIR}:${PROTO_DIR} GRPC_VERBOSITY=debug ${VENV_DIR}/bin/python -m app'

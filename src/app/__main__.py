@@ -17,6 +17,8 @@ from app.proto.lootbox_pb2_grpc import add_LootBoxServicer_to_server
 from app.opts.loki import LokiOpt
 from app.opts.zipkin import ZipkinOpt
 from app.opts import App, AppGRPCInterceptorOpt, AppGRPCServiceOpt
+from app.interceptors.logging import DebugLoggingServerInterceptor
+from app.interceptors.metrics import MetricsServerInterceptor
 from app.interceptors.authorization import AuthorizationServerInterceptor
 from app.services.lootbox_service import AsyncLootBoxService
 
@@ -55,8 +57,8 @@ async def main(port:int, logger: Optional[Logger] = None, **kwargs) -> None:
 
     opts = []
     with env.prefixed(prefix="ENABLE_"):
-        if env.bool("LOKI", False):                                                             # TODO: change back to true
-            opts.append(LokiOpt())                                                              # TODO: running this give error figure out why
+        if env.bool("LOKI", True):
+            opts.append(LokiOpt())
         if env.bool("ZIPKIN", True):
             opts.append(ZipkinOpt())
     
@@ -67,8 +69,8 @@ async def main(port:int, logger: Optional[Logger] = None, **kwargs) -> None:
             from accelbyte_py_sdk.core import MyConfigRepository, InMemoryTokenRepository
             from accelbyte_py_sdk.token_validation.caching import CachingTokenValidator
 
-            resource = env("RESOURCE", "ADMIN:NAMESPACE:{namespace}:CHAT:CONFIG")               # TODO: change this permission!!!!!
-            action = env.int("ACTION", int(PermissionAction.READ | PermissionAction.UPDATE))
+            resource = env("RESOURCE", "NAMESPACE:{namespace}:PLRGRPCSERVICE")
+            action = env.int("ACTION", int(PermissionAction.READ))
 
             config = MyConfigRepository(
                 base_url, client_id, client_secret, namespace=namespace
@@ -84,6 +86,12 @@ async def main(port:int, logger: Optional[Logger] = None, **kwargs) -> None:
             )
             opts.append(AppGRPCInterceptorOpt(auth_server_interceptor))
     
+    if env.bool("PLUGIN_GRPC_SERVER_LOGGING_ENABLED", False):
+        opts.append(AppGRPCInterceptorOpt(DebugLoggingServerInterceptor(logger)))
+
+    if env.bool("PLUGIN_GRPC_SERVER_METRICS_ENABLED", True):
+        opts.append(AppGRPCInterceptorOpt(MetricsServerInterceptor()))
+
     opts.append(
         AppGRPCServiceOpt(
             AsyncLootBoxService(
