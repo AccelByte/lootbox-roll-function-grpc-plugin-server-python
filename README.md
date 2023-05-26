@@ -1,4 +1,4 @@
-# lootbox-roll-function-grpc-plugin-server-java
+# lootbox-roll-function-grpc-plugin-server-python
 
 ```mermaid
 flowchart LR
@@ -22,7 +22,7 @@ contains a docker compose which consists of these `dependency services`.
 
 ## Overview
 
-This repository contains a `sample lootbox roll function gRPC server app` written in `Java`. It provides a simple custom lootbox roll function for platform service in AccelByte Gaming Services.
+This repository contains a `sample lootbox roll function gRPC server app` written in `Python`. It provides a simple custom lootbox roll function for platform service in AccelByte Gaming Services.
 
 This sample app also shows how this `gRPC server` can be instrumented for better observability. 
 It is configured by default to send metrics, traces, and logs to the observability `dependency services` in [grpc-plugin-dependencies](https://github.com/AccelByte/grpc-plugin-dependencies).
