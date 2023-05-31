@@ -6,7 +6,7 @@ import opentelemetry.trace
 from opentelemetry.exporter.zipkin.proto.http import ZipkinExporter
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 
-from app.opts import App, AppOptABC, AppOptOrder
+from accelbyte_grpc_plugin import App, AppOptABC, AppOptOrder
 
 
 class ZipkinOpt(AppOptABC):

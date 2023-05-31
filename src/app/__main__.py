@@ -14,12 +14,12 @@ from environs import Env
 
 from app.proto.lootbox_pb2_grpc import add_LootBoxServicer_to_server
 
-from app.opts.loki import LokiOpt
-from app.opts.zipkin import ZipkinOpt
-from app.opts import App, AppGRPCInterceptorOpt, AppGRPCServiceOpt
-from app.interceptors.logging import DebugLoggingServerInterceptor
-from app.interceptors.metrics import MetricsServerInterceptor
-from app.interceptors.authorization import AuthorizationServerInterceptor
+from accelbyte_grpc_plugin.opts.loki import LokiOpt
+from accelbyte_grpc_plugin.opts.zipkin import ZipkinOpt
+from accelbyte_grpc_plugin import App, AppGRPCInterceptorOpt, AppGRPCServiceOpt
+from accelbyte_grpc_plugin.interceptors.logging import DebugLoggingServerInterceptor
+from accelbyte_grpc_plugin.interceptors.metrics import MetricsServerInterceptor
+from accelbyte_grpc_plugin.interceptors.authorization import AuthorizationServerInterceptor
 from app.services.lootbox_service import AsyncLootBoxService
 
 DEFAULT_APP_PORT: int = 6565
