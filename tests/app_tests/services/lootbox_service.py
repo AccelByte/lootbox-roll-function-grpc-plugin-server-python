@@ -8,13 +8,10 @@ from typing import List
 from unittest import IsolatedAsyncioTestCase
 import uuid
 
-import grpc.aio
-
 from app.proto.lootbox_pb2 import (
     RollLootBoxRewardsRequest, 
     RollLootBoxRewardsResponse, 
     LootBoxItemInfo, 
-    LootBoxRewardObject, 
     BoxItemObject,
 )
 from app.proto.lootbox_pb2_grpc import (
@@ -31,7 +28,7 @@ class AsyncLootBoxServiceTestCase(IsolatedAsyncioTestCase):
 
     async def test_filter_bulk_filters_profanities(self):
        
-        request = RollLootBoxRewardsResponse(
+        request = RollLootBoxRewardsRequest(
             userId = "b52a2364226d436285c1b8786bc9cbd1",
             namespace = "accelbyte",
             quantity = 10,
@@ -39,7 +36,7 @@ class AsyncLootBoxServiceTestCase(IsolatedAsyncioTestCase):
                 itemId = "8a0b8bda28c845f6938cc57540af452e",
                 itemSku = "SKU3170",
                 rewardCount = 2,
-                lootBoxRewards = [LootBoxRewardObject(
+                lootBoxRewards = [LootBoxItemInfo.LootBoxRewardObject(
                     name = "Foods",
                     type = "REWARD",
                     weight = 5,
