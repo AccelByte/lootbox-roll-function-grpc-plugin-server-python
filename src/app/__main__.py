@@ -82,7 +82,7 @@ async def main(port: int, **kwargs) -> None:
             from accelbyte_py_sdk.core import MyConfigRepository, InMemoryTokenRepository
             from accelbyte_py_sdk.token_validation.caching import CachingTokenValidator
 
-            resource = env("RESOURCE", "ADMIN:NAMESPACE:{namespace}:LOOTBOX:CONFIG")
+            resource = env("RESOURCE", "ADMIN:NAMESPACE:{namespace}:PLRGRPCSERVICE:CONFIG")
             action = env.int("ACTION", int(PermissionAction.READ | PermissionAction.UPDATE))
 
             config = MyConfigRepository(
