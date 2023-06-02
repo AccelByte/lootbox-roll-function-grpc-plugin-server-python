@@ -51,12 +51,8 @@ class AuthorizationServerInterceptor(ServerInterceptor):
                 action=self.action,
                 namespace=self.namespace,
             )
-            
             if error is not None:
-                raise self.create_aio_rpc_error(
-                    error="validate_token error: " + str(error),
-                    code=StatusCode.INTERNAL
-                )
+                raise error
         except Exception as e:
             raise self.create_aio_rpc_error(
                 error=str(e), code=StatusCode.INTERNAL

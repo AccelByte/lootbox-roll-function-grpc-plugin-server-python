@@ -1,5 +1,7 @@
-.env
 Dockerfile
 Makefile
 venv/
+venvw/
 venv-dev/
+.cache/
+.env

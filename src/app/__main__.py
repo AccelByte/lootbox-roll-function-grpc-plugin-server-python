@@ -3,23 +3,34 @@
 # and restrictions contact your company contract manager.
 
 import asyncio
+import json
 import logging
 
-from logging import Logger
-from typing import Optional
-from enum import IntFlag
 from argparse import ArgumentParser
+from enum import IntFlag
+from pathlib import Path
+from typing import Optional
 
 from environs import Env
 
 from app.proto.lootbox_pb2_grpc import add_LootBoxServicer_to_server
 
-from app.opts.loki import LokiOpt
-from app.opts.zipkin import ZipkinOpt
-from app.opts import App, AppGRPCInterceptorOpt, AppGRPCServiceOpt
-from app.interceptors.logging import DebugLoggingServerInterceptor
-from app.interceptors.metrics import MetricsServerInterceptor
-from app.interceptors.authorization import AuthorizationServerInterceptor
+from accelbyte_grpc_plugin import App, AppGRPCInterceptorOpt, AppGRPCServiceOpt
+from accelbyte_grpc_plugin.interceptors.authorization import (
+    AuthorizationServerInterceptor,
+)
+from accelbyte_grpc_plugin.interceptors.logging import (
+    DebugLoggingServerInterceptor,
+)
+from accelbyte_grpc_plugin.interceptors.metrics import (
+    MetricsServerInterceptor,
+)
+from accelbyte_grpc_plugin.opts.grpc_health_checking import GRPCHealthCheckingOpt
+from accelbyte_grpc_plugin.opts.grpc_reflection import GRPCReflectionOpt
+from accelbyte_grpc_plugin.opts.loki import LokiOpt
+from accelbyte_grpc_plugin.opts.prometheus import PrometheusOpt
+from accelbyte_grpc_plugin.opts.zipkin import ZipkinOpt
+
 from app.services.lootbox_service import AsyncLootBoxService
 
 DEFAULT_APP_PORT: int = 6565
@@ -30,14 +41,7 @@ class PermissionAction(IntFlag):
     UPDATE = 0b0100
     DELETE = 0b1000
 
-async def main(port:int, logger: Optional[Logger] = None, **kwargs) -> None:
-    
-    # setup logger
-    logger = logging.getLogger("app")
-    logger.setLevel(logging.INFO)
-    logger.addHandler(logging.StreamHandler())
-
-    # setup env reading config
+async def main(port: int, **kwargs) -> None:
     env = Env(
         eager=kwargs.get("env_eager", True),
         expand_vars=kwargs.get("env_expand_vars", False),
@@ -49,28 +53,37 @@ async def main(port:int, logger: Optional[Logger] = None, **kwargs) -> None:
         override=kwargs.get("env_override", False),
     )
 
+    opts = []
+    logger = logging.getLogger("app")
+    logger.setLevel(logging.INFO)
+    logger.addHandler(logging.StreamHandler())
+
     with env.prefixed("AB_"):
         base_url = env("BASE_URL", "https://demo.accelbyte.io")
-        client_id = env("CLIENT_ID", None)
-        client_secret = env("CLIENT_SECRET", None)
+        client_id = env("SECURITY_CLIENT_ID", None)
+        client_secret = env("SECURITY_CLIENT_SECRET", None)
         namespace = env("NAMESPACE", "accelbyte")
 
-    opts = []
     with env.prefixed(prefix="ENABLE_"):
         if env.bool("LOKI", True):
             opts.append(LokiOpt())
+        if env.bool("PROMETHEUS", True):
+            opts.append(PrometheusOpt())
+        if env.bool("HEALTH_CHECKING", True):
+            opts.append(GRPCHealthCheckingOpt())
+        if env.bool("REFLECTION", True):
+            opts.append(GRPCReflectionOpt())
         if env.bool("ZIPKIN", True):
             opts.append(ZipkinOpt())
-    
-    # login if specified
+
     with env.prefixed(prefix="PLUGIN_GRPC_SERVER_AUTH_"):
         if env.bool("ENABLED", False):
             from accelbyte_py_sdk import AccelByteSDK
             from accelbyte_py_sdk.core import MyConfigRepository, InMemoryTokenRepository
             from accelbyte_py_sdk.token_validation.caching import CachingTokenValidator
 
-            resource = env("RESOURCE", "NAMESPACE:{namespace}:PLRGRPCSERVICE")
-            action = env.int("ACTION", int(PermissionAction.READ))
+            resource = env("RESOURCE", "ADMIN:NAMESPACE:{namespace}:LOOTBOX:CONFIG")
+            action = env.int("ACTION", int(PermissionAction.READ | PermissionAction.UPDATE))
 
             config = MyConfigRepository(
                 base_url, client_id, client_secret, namespace=namespace
