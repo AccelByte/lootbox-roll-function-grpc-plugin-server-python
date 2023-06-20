@@ -36,9 +36,9 @@ It is configured by default to send metrics, traces, and logs to the observabili
 
     b. make
 
-    c. docker
+    c. docker v23.x
 
-    d. docker-compose v2
+    d. docker-compose v2.x
 
     e. python 3.9
 
