@@ -191,11 +191,6 @@ The custom functions in this sample app can be tested locally using `postman`.
    }
    ```
 
-### Test Functionality using CLI Demo App
-
-The functionality of `gRPC server` methods can be tested with AccelByte Gaming Service using CLI demo app [here](demo/cli/).
-Read its [readme](demo/cli/README.md) on how to use it.
-
 ## Advanced
 
 ### Building Multi-Arch Docker Image
