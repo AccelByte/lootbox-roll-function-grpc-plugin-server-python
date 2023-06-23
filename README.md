@@ -22,7 +22,7 @@ contains a docker compose which consists of these `dependency services`.
 
 ## Overview
 
-This repository contains a `sample lootbox roll function gRPC server app` written in `Python`. It provides a simple custom lootbox roll function for platform service in AccelByte Gaming Services.
+This repository contains a `sample lootbox roll function gRPC server app` written in `Python`. It provides a simple custom lootbox roll function for platform service in `AccelByte Gaming Services`.
 
 This sample app also shows how this `gRPC server` can be instrumented for better observability. 
 It is configured by default to send metrics, traces, and logs to the observability `dependency services` in [grpc-plugin-dependencies](https://github.com/AccelByte/grpc-plugin-dependencies).
@@ -32,25 +32,37 @@ It is configured by default to send metrics, traces, and logs to the observabili
 
 1. Windows 10 WSL2 or Linux Ubuntu 20.04 with the following tools installed.
 
-    a. bash
+   a. bash
 
-    b. make
+   b. make
 
-    c. docker v23.x
+   c. docker v23.x
 
-    d. docker-compose v2.x
+   d. docker-compose v2.x
 
-    e. python 3.9
+   e. docker loki driver
+
+      ```
+      docker plugin install grafana/loki-docker-driver:latest --alias loki --grant-all-permissions
+      ```
+
+   f. python 3.9
+
+   g. git
+
+   h. [ngrok](https://ngrok.com/)
+
+   i. [postman](https://www.postman.com/)
 
 2. A local copy of [grpc-plugin-dependencies](https://github.com/AccelByte/grpc-plugin-dependencies) repository.
 
 3. Access to `AccelByte Gaming Services` demo environment.
 
-    a. Base URL: https://demo.accelbyte.io.
+   a. Base URL: https://demo.accelbyte.io.
 
-    b. [Create a Game Namespace](https://docs.accelbyte.io/esg/uam/namespaces.html#tutorials) if you don't have one yet. Keep the `Namespace ID`.
+   b. [Create a Game Namespace](https://docs.accelbyte.io/esg/uam/namespaces.html#tutorials) if you don't have one yet. Keep the `Namespace ID`.
 
-    c. [Create an OAuth Client](https://docs.accelbyte.io/guides/access/iam-client.html) with `confidential` client type. Keep the `Client ID` and `Client Secret`.
+   c. [Create an OAuth Client](https://docs.accelbyte.io/guides/access/iam-client.html) with `confidential` client type. Keep the `Client ID` and `Client Secret`.
 
 ## Setup
 
@@ -61,14 +73,14 @@ To be able to run this sample app, you will need to follow these setup steps.
 
    ```
    AB_BASE_URL=https://demo.accelbyte.io      # Base URL of AccelByte Gaming Services demo environment
-   AB_CLIENT_ID='xxxxxxxxxx'                  # Use Client ID from the Setup section
-   AB_CLIENT_SECRET='xxxxxxxxxx'              # Use Client Secret from the Setup section
-   AB_NAMESPACE='xxxxxxxxxx'                  # Use Namespace ID from the Setup section
+   AB_CLIENT_ID='xxxxxxxxxx'                  # Use Client ID from the Prerequisites section
+   AB_CLIENT_SECRET='xxxxxxxxxx'              # Use Client Secret from the Prerequisites section
+   AB_NAMESPACE='xxxxxxxxxx'                  # Use Namespace ID from the Prerequisites section
    PLUGIN_GRPC_SERVER_AUTH_ENABLED=false      # Enable or disable access token and permission verification
    ```
 
    > :warning: **Keep PLUGIN_GRPC_SERVER_AUTH_ENABLED=false for now**: It is currently not
-   supported by AccelByte Gaming Services but it will be enabled later on to improve security. If it is
+   supported by `AccelByte Gaming Services` but it will be enabled later on to improve security. If it is
    enabled, the gRPC server will reject any calls from gRPC clients without proper authorization
    metadata.
 
@@ -80,25 +92,9 @@ To build this sample app, use the following command.
 make build
 ```
 
-To build and create a docker image of this sample app, use the following command.
-
-```
-make image
-```
-
-For more details about the command, see [Makefile](Makefile).
-
 ## Running
 
-To run the existing docker image of this sample app which has been built before, use the following command.
-
-```
-docker-compose up
-```
-
-OR
-
-To build, create a docker image, and run the this sample app in one go, use the following command.
+To (build and) run this sample app in a container, use the following command.
 
 ```
 docker-compose up --build
@@ -110,15 +106,15 @@ docker-compose up --build
 
 The custom functions in this sample app can be tested locally using `postman`.
 
-1. Start the `dependency services` by following the `README.md` in the [grpc-plugin-dependencies](https://github.com/AccelByte/grpc-plugin-dependencies) repository.
+1. Run the `dependency services` by following the `README.md` in the [grpc-plugin-dependencies](https://github.com/AccelByte/grpc-plugin-dependencies) repository.
 
-   > :warning: **Make sure to start dependency services with mTLS disabled for now**: It is currently not supported by AccelByte Gaming Services but it will be enabled later on to improve security. If it is enabled, the gRPC client calls without mTLS will be rejected by Envoy proxy.
+   > :warning: **Make sure to start dependency services with mTLS disabled for now**: It is currently not supported by `AccelByte Gaming Services` but it will be enabled later on to improve security. If it is enabled, the gRPC client calls without mTLS will be rejected.
 
-2. Start this `gRPC server` sample app.
+2. Run this `gRPC server` sample app.
 
 3. Open `postman`, create a new `gRPC request`, and enter `localhost:10000` as server URL. 
 
-   > :exclamation: We are essentially accessing the `gRPC server` through an `Envoy` proxy which is a part of `dependency services`.
+   > :exclamation: We are essentially accessing the `gRPC server` through an `Envoy` proxy in `dependency services`.
 
 4. Still in `postman`, continue by selecting `LootBox/RollLootBoxRewards` method and invoke it with the sample message below.
 
@@ -191,14 +187,10 @@ The custom functions in this sample app can be tested locally using `postman`.
    }
    ```
 
-## Advanced
+## Pushing
 
-### Building Multi-Arch Docker Image
-
-To create a multi-arch docker image of the project, use the following command.
+To build and push this sample app multi-arch container image to AWS ECR, use the following command.
 
 ```
-make imagex
+make imagex_push REPO_URL=xxxxxxxxxx.dkr.ecr.us-west-2.amazonaws.com/accelbyte/justice/development/extend/xxxxxxxxxx/xxxxxxxxxx IMAGE_TAG=v0.0.1
 ```
-
-For more details about the command, see [Makefile](Makefile).
