@@ -19,8 +19,8 @@ class PlatformDataUnit:
         self.currency_code = currency_code
         self.store_id = None
     
-    def creat_store(self) -> Tuple[platform_models.StoreInfo, any]:         
-        _, error = platform_service.create_store(
+    def creat_store(self, do_publish : bool):         
+        result, error = platform_service.create_store(
             namespace=self.config.ABNamespace,
             body=platform_models.StoreCreate.create(
                 title=AB_STORE_NAME,
@@ -31,6 +31,16 @@ class PlatformDataUnit:
                 supported_regions=["US"]
             )
         )
+        if error:
+            return error
+
+        self.store_id = result.store_id
+        
+        if do_publish:
+            error = self.publish_store_change()
+            if error:
+                return error
+
         return error
     
     def set_platform_service_grpc_target(self):
@@ -47,13 +57,14 @@ class PlatformDataUnit:
     def publish_store_change(self):
         if not self.store_id:
             return None, ERR_EMPTY_STORE_ID
+        
         _, error = platform_service.publish_all(
             namespace=self.config.ABNamespace,
             store_id=self.store_id
         )
         return error
 
-    def create_category(self, category_path : str):
+    def create_category(self, category_path : str, do_publish : bool):
         if not self.store_id:
             return None, ERR_EMPTY_STORE_ID
         
@@ -65,10 +76,27 @@ class PlatformDataUnit:
                 localization_display_names={"en" : category_path}
             )
         )
+        if error:
+            return error
+
+        if do_publish:
+            error = self.publish_store_change()
+            if error:
+                return error
 
         return error
     
     def create_currency(self):
+        result, error = platform_service.get_currency_summary(
+            namespace=self.config.ABNamespace,
+            currency_code=self.currency_code
+        )
+        if error:
+            return error
+        elif result:
+            # already exists
+            return None
+        
         _, error = platform_service.create_currency(
             namespace=self.config.ABNamespace,
             body=platform_models.CurrencyCreate.create(
@@ -103,7 +131,7 @@ class PlatformDataUnit:
         return error
 
     
-    def create_items(self, item_count : int, item_diff : str, reward_item_count : int, category_path : str, do_publish : bool):
+    def create_items(self, item_count : int, item_diff : str, category_path : str, do_publish : bool):
         if not self.store_id:
             return None, ERR_EMPTY_STORE_ID
         
@@ -169,11 +197,11 @@ class PlatformDataUnit:
                 items, error = self.create_items(item_count=1, category_path=category_path, item_diff=item_diff, do_publish=do_publish)
                 if error:
                     return None, error
-                elif not items.id:
-                    return None, ERR_EMPTY_ITEM_ID
                 
                 reward_box_items = []
                 for item_info in items:
+                    if not item_info.id:
+                        return None, ERR_EMPTY_ITEM_ID
                     reward_box_items.append(platform_models.BoxItem.create(
                         count=1,
                         item_id=item_info.id,
@@ -253,12 +281,9 @@ class PlatformDataUnit:
         elif len(entitlement_info) <= 0:
             return "", "could not grant item to user"
         
-        return entitlement_info[0].id, None
+        return entitlement_info[0].id_, None
             
-    def consume_item_entitlement(self, user_id : str, entitlement_id : str, count : int):
-        if not self.store_id:
-            return "", ERR_EMPTY_STORE_ID
-        
+    def consume_item_entitlement(self, user_id : str, entitlement_id : str, count : int):      
         result, error = platform_service.consume_user_entitlement(
             namespace=self.config.ABNamespace,
             entitlement_id=entitlement_id,

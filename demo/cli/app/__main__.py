@@ -7,7 +7,7 @@ import accelbyte_py_sdk.api.iam as iam_service
 from client.config import get_config
 from client.demo import PlatformDataUnit
 
-def start_testing(user_info, config, category_path="/python_lootbox_roll_plugin_demo"):
+def start_testing(user_info, config, category_path="/pythonLootboxRollPluginDemo"):
     pdu = PlatformDataUnit(
         user_info=user_info, 
         config=config, 
@@ -24,7 +24,7 @@ def start_testing(user_info, config, category_path="/python_lootbox_roll_plugin_
         
         # 2.
         print("Creating store... ")
-        error = pdu.creat_store()
+        error = pdu.creat_store(True)
         if error:
             print("[ERR]")
             raise Exception(error)
@@ -32,7 +32,7 @@ def start_testing(user_info, config, category_path="/python_lootbox_roll_plugin_
 
         # 3.
         print("Creating category... ")
-        error = pdu.create_category(category_path)
+        error = pdu.create_category(category_path, True)
         if error:
             print("[ERR]")
             raise Exception(error)
@@ -77,17 +77,21 @@ def start_testing(user_info, config, category_path="/python_lootbox_roll_plugin_
         print("\n[FAILED]")
     finally:
         print("# Cleaning Up")
-        print("## Deleting currency...")
-        error = pdu.delete_store()
-        if error:
-            return
-        print("[OK]")
+        if pdu.store_id:
+            print("Deleting store...")
+            error = pdu.delete_store()
+            if error:
+                print(error)
+                return
+            print("[OK]")
         
         if config.GRPCServerURL:
+            print("Unset platform service grpc target... ")
             error = pdu.unset_platform_service_grpc_target()
             if error:
                 print("failed to unset platform service grpc plugin url")
                 return
+            print("[OK]")
         print("[CLEAN UP FINISHED]")
 
 def main():
@@ -109,7 +113,7 @@ def main():
     print("[OK]")
     
     print("# Test Start")
-    start_testing()
+    start_testing(user_info, config)
             
 if __name__ == "__main__":
     main()
