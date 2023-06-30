@@ -222,7 +222,7 @@ in local development environment to the internet so that it can be called by
 
 6. Create a user for testing. Keep the `Username` and `Password`.
 
-7. Set the necessary environment variables in [.env.example](demo/cli/.env.example) and run the [Makefile](Makefile) CLI command. The CLI will set up the necessary configuration and then give you instructions on how to configure platform service. If successful, the word `[SUCCESS]` will be print out in the terminal.
+7. Make a `.env` file under `demo/cli` and set the necessary environment variables in [.env.example](demo/cli/.env.example) then run the [Makefile](Makefile) CLI command. The CLI will set up the necessary configuration and then give you instructions on how to configure platform service. If successful, the word `[SUCCESS]` will be print out in the terminal.
 
    ```
    AB_BASE_URL='https://demo.accelbyte.io'
