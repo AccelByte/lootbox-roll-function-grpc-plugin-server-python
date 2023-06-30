@@ -1,11 +1,11 @@
 import traceback
 
-import accelbyte_py_sdk
-import accelbyte_py_sdk.services.auth as auth_service
-import accelbyte_py_sdk.api.iam as iam_service
+import pkg.client.accelbyte_py_sdk_temp as accelbyte_py_sdk
+import pkg.client.accelbyte_py_sdk_temp.services.auth as auth_service
+import pkg.client.accelbyte_py_sdk_temp.api.iam as iam_service
 
-from client.config import get_config
-from client.demo import PlatformDataUnit
+from pkg.config import get_config
+from pkg.demo import PlatformDataUnit
 
 def start_testing(user_info, config, category_path="/pythonLootboxRollPluginDemo"):
     pdu = PlatformDataUnit(
@@ -32,7 +32,7 @@ def start_testing(user_info, config, category_path="/pythonLootboxRollPluginDemo
 
         # 3.
         print("Creating category... ")
-        error = pdu.create_category(category_path, True)
+        error = pdu.create_category(category_path=category_path, do_publish=True)
         if error:
             print("[ERR]")
             raise Exception(error)
@@ -48,7 +48,7 @@ def start_testing(user_info, config, category_path="/pythonLootboxRollPluginDemo
 
         # 5.
         print("Creating lootbox item(s)... ")
-        items, error = pdu.create_lootbox_items(1, 5, category_path, True)
+        items, error = pdu.create_lootbox_items(item_count=1, reward_item_count=5, category_path=category_path, do_publish=True)
         if error:
             print("[ERR]")
             raise Exception(error)
@@ -56,7 +56,7 @@ def start_testing(user_info, config, category_path="/pythonLootboxRollPluginDemo
 
         # 6.
         print(f"Granting item entitlement to user {user_info.user_name}... ")
-        entitlement_id, error = pdu.grant_entitlement(user_info.user_id, items[0].id, 1)
+        entitlement_id, error = pdu.grant_entitlement(user_id=user_info.user_id, item_id=items[0].id, count=1)
         if error:
             print("[ERR]")
             raise Exception(error)
@@ -65,7 +65,7 @@ def start_testing(user_info, config, category_path="/pythonLootboxRollPluginDemo
 
         # 7.
         print("Consuming entitlement... ")
-        lootbox_item_result, error = pdu.consume_item_entitlement(user_info.user_id, entitlement_id, 2)
+        lootbox_item_result, error = pdu.consume_item_entitlement(user_id=user_info.user_id, entitlement_id=entitlement_id, count=2)
         if error:
             print("[ERR]")
             raise Exception(error)
@@ -77,6 +77,12 @@ def start_testing(user_info, config, category_path="/pythonLootboxRollPluginDemo
         print("\n[FAILED]")
     finally:
         print("# Cleaning Up")
+        print("Deleting currency... ")
+        _, error = pdu.delete_currency()
+        if error:
+            print(error)
+            return
+        print("[OK]")
         if pdu.store_id:
             print("Deleting store...")
             error = pdu.delete_store()
