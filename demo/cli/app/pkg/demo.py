@@ -135,7 +135,7 @@ class PlatformDataUnit:
     
     def delete_store(self):
         if not self.store_id:
-            return None, ERR_EMPTY_STORE_ID
+            return ERR_EMPTY_STORE_ID
         
         _, error = platform_service.delete_store(
             namespace=self.config.ABNamespace,
