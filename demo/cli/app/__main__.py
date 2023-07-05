@@ -1,8 +1,8 @@
 import traceback
 
-import pkg.client.accelbyte_py_sdk_temp as accelbyte_py_sdk
-import pkg.client.accelbyte_py_sdk_temp.services.auth as auth_service
-import pkg.client.accelbyte_py_sdk_temp.api.iam as iam_service
+import accelbyte_py_sdk as accelbyte_py_sdk
+import accelbyte_py_sdk.services.auth as auth_service
+import accelbyte_py_sdk.api.iam as iam_service
 
 from pkg.config import get_config
 from pkg.demo import PlatformDataUnit
