@@ -51,7 +51,7 @@ class PlatformDataUnit:
         
         return None
     
-    def creat_store(self, do_publish : bool):         
+    def create_store(self, do_publish : bool):         
         result, error = platform_service.create_store(
             namespace=self.config.ABNamespace,
             body=platform_models.StoreCreate.create(
