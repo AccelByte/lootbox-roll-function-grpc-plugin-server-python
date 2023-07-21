@@ -29,11 +29,11 @@ class AsyncLootBoxServiceTestCase(IsolatedAsyncioTestCase):
     async def test_filter_bulk_filters_profanities(self):
        
         request = RollLootBoxRewardsRequest(
-            userId = "b52a2364226d436285c1b8786bc9cbd1",
+            userId = "",
             namespace = "accelbyte",
             quantity = 10,
             itemInfo = LootBoxItemInfo(
-                itemId = "8a0b8bda28c845f6938cc57540af452e",
+                itemId = "",
                 itemSku = "SKU3170",
                 rewardCount = 2,
                 lootBoxRewards = [LootBoxItemInfo.LootBoxRewardObject(
@@ -42,8 +42,8 @@ class AsyncLootBoxServiceTestCase(IsolatedAsyncioTestCase):
                     weight = 5,
                     odds = 0,
                     items = [BoxItemObject(
-                        itemId = "8b6016d243264c0f90031600313b8a37",
-                        itemSku = "SKU4650",
+                        itemId = "",
+                        itemSku = "",
                         count = 5
                     )]
                 )]

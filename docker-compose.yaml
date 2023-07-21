@@ -14,8 +14,8 @@ services:
       - "8080:8080"
     environment:
       - AB_BASE_URL
-      - AB_SECURITY_CLIENT_ID
-      - AB_SECURITY_CLIENT_SECRET
+      - AB_CLIENT_ID
+      - AB_CLIENT_SECRET
       - AB_NAMESPACE
       - PLUGIN_GRPC_SERVER_AUTH_ENABLED
       - GRPC_VERBOSITY=debug
