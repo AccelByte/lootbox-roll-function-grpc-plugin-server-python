@@ -236,6 +236,7 @@ in local development environment to the internet so that it can be called by
    then run in the terminal
    ```
    $ cd demo/cli
+   $ make setup
    $ make run
    ```
 
