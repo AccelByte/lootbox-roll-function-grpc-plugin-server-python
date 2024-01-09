@@ -1,5 +1,5 @@
-from pkg.model import SimpleItemInfo, SimpleLootboxItem
-from pkg.utils import random_string
+from .model import SimpleItemInfo, SimpleLootboxItem
+from .utils import random_string
 
 from typing import Tuple, List
 
