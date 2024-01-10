@@ -15,6 +15,7 @@ trap clean_up EXIT
 
 echo '# Build and run Extend app locally'
 python -m pip install -r requirements.txt
+export ENABLE_ZIPKIN="false" # ignore the zipkin
 (cd src && python -m app)& GRPC_SERVER_PID=$!
 
 (for _ in {1..12}; do bash -c "timeout 1 echo > /dev/tcp/127.0.0.1/8080" 2>/dev/null && exit 0 || sleep 5s; done; exit 1)
@@ -53,7 +54,11 @@ if [ -z "$NGROK_URL" ]; then
   exit 1
 fi
 
+if [ -z "$GRPC_SERVER_URL" ]; then
+    echo "GRPC_SERVER_URL is not set. Setting it now..."
+    export GRPC_SERVER_URL="${NGROK_URL#*://}"
+fi
+
 echo '# Testing Extend app using demo CLI'
 
-# shellcheck disable=SC2034
-(cd demo/cli && GRPC_SERVER_URL="${NGROK_URL#*://}" && python -m app)
+(cd demo/cli && python -m app)

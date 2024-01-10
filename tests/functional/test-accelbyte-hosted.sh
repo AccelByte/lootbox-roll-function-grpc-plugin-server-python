@@ -145,7 +145,11 @@ if ! [ "$STATUS" = "R" ]; then
     exit 1
 fi
 
+if [ -z "$GRPC_SERVER_URL" ]; then
+    echo "GRPC_SERVER_URL is not set. Setting it now..."
+    export GRPC_SERVER_URL=$APP_URL
+fi
+
 echo '# Testing Extend app using demo CLI'
 
-# shellcheck disable=SC2034
-(cd demo/cli && GRPC_SERVER_URL=$APP_URL && python -m app)
+(cd demo/cli && python -m app)
