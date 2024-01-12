@@ -1,11 +1,12 @@
 PIP_EXEC_PATH = bin/pip
 PROTO_DIR = app/proto
 PYTHON_EXEC_PATH = bin/python
-SOURCE_DIR = src
+SOURCE_DIR := src
 TESTS_DIR = tests
-VENV_DIR = venv
+VENV_DIR := venv
 VENV_DEV_DIR = venv-dev
 
+PROJECT_DIR ?= $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 IMAGE_NAME := $(shell basename "$$(pwd)")-app
 BUILDER := grpc-plugin-server-builder
 
@@ -27,7 +28,7 @@ clean:
 	rm -f ${SOURCE_DIR}/${PROTO_DIR}/*_pb2_grpc.py
 
 proto: clean
-	docker run -t --rm -u $$(id -u):$$(id -g) -v $$(pwd):/data/ -w /data/ rvolosatovs/protoc:4.0.0 \
+	docker run -t --rm -u $$(id -u):$$(id -g) -v $(PROJECT_DIR):/data/ -w /data/ rvolosatovs/protoc:4.0.0 \
 		--proto_path=${PROTO_DIR}=${SOURCE_DIR}/${PROTO_DIR} \
 		--python_out=${SOURCE_DIR} \
 		--grpc-python_out=${SOURCE_DIR} \
@@ -79,6 +80,7 @@ test_functional_accelbyte_hosted: proto
 	docker run --rm -t \
 		--env-file $(ENV_PATH) \
 		-e HOME=/data \
+		-e PROJECT_DIR=$(PROJECT_DIR) \
 		-u $$(id -u):$$(id -g) \
 		--group-add $$(getent group docker | cut -d ':' -f 3) \
 		-v /var/run/docker.sock:/var/run/docker.sock \

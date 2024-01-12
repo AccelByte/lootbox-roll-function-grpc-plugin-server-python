@@ -38,7 +38,7 @@ class PlatformDataUnit:
         if self.config.ExtendAppName:
             print(f"(Extend App: {self.config.ExtendAppName}) ")
 
-            _, error = platform_service.UpdateLootBoxPluginConfig(
+            _, error = platform_service.update_loot_box_plugin_config(
                 namespace=self.config.ABNamespace,
                 body=platform_models.LootBoxPluginConfigUpdate.create(
                     extend_type=platform_models.LootBoxPluginConfigUpdateExtendTypeEnum.APP,
