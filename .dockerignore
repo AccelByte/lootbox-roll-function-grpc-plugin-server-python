@@ -1,7 +1,5 @@
-Dockerfile
-Makefile
 venv/
-venvw/
-venv-dev/
 .cache/
+.docker/
+.local/
 .env
