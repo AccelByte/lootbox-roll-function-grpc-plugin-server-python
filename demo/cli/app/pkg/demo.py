@@ -112,8 +112,8 @@ class PlatformDataUnit:
             body=platform_models.CurrencyCreate.create(
                 currency_code=self.currency_code,
                 currency_symbol="USDT1$",
-                currency_type=platform_models.CurrencyCreateCurrencyTypeEnum.REAL,
-                decimals=2
+                currency_type=platform_models.CurrencyCreateCurrencyTypeEnum.VIRTUAL,
+                decimals=0
             ),
         )
         return error
