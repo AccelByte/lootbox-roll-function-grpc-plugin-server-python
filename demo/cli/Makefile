@@ -5,7 +5,7 @@ VENV_DIR = venv
 
 setup:
 	rm -rf ${VENV_DIR}
-	python3.9 -m venv ${VENV_DIR} \
+	python3.10 -m venv ${VENV_DIR} \
 			&& ${VENV_DIR}/${PIP_EXEC_PATH} install --upgrade pip \
 			&& ${VENV_DIR}/${PIP_EXEC_PATH} install -r requirements.txt
 

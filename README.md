@@ -41,7 +41,7 @@ custom roll function for platform service in `AccelByte Gaming Services`.
 
    c. [docker v23.x](https://docs.docker.com/engine/install/ubuntu/)
 
-   d. python 3.9
+   d. python 3.10
 
    e. [postman](https://www.postman.com/)
 

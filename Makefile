@@ -30,7 +30,7 @@ proto: clean
 			${SOURCE_DIR}/app/proto/*.proto
 
 venv:
-	python3.9 -m venv ${VENV_DIR} \
+	python3.10 -m venv ${VENV_DIR} \
 			&& ${VENV_DIR}/bin/pip install -r requirements-dev.txt
 
 build: proto
@@ -41,7 +41,7 @@ run:
 			-v $$(pwd):/data \
 			-w /data \
 			-e HOME=/data \
-			--entrypoint /bin/sh python:3.9-slim \
+			--entrypoint /bin/sh python:3.10-slim \
 			-c 'ln -sf $$(which python) ${VENV_DIR}/bin/python-docker \
 					&& PYTHONPATH=${SOURCE_DIR} GRPC_VERBOSITY=debug ${VENV_DIR}/bin/python-docker -m app'
 
@@ -51,7 +51,7 @@ help:
 			-v $$(pwd):/data \
 			-w /data \
 			-e HOME=/data \
-			--entrypoint /bin/sh python:3.9-slim \
+			--entrypoint /bin/sh python:3.10-slim \
 			-c 'ln -sf $$(which python) ${VENV_DIR}/bin/python-docker \
 					&& PYTHONPATH=${SOURCE_DIR} ${VENV_DIR}/bin/python-docker -m app --help'
 
@@ -72,7 +72,7 @@ imagex_push:
 	docker buildx rm --keep-state $(BUILDER)
 
 test:
-	docker run --rm -t -u $$(id -u):$$(id -g) -v $$(pwd):/data -w /data -e HOME=/data --entrypoint /bin/sh python:3.9-slim \
+	docker run --rm -t -u $$(id -u):$$(id -g) -v $$(pwd):/data -w /data -e HOME=/data --entrypoint /bin/sh python:3.10-slim \
 			-c 'ln -sf $$(which python) ${VENV_DIR}/bin/python-docker \
 					&& PYTHONPATH=${SOURCE_DIR}:${TEST_DIR} ${VENV_DIR}/bin/python-docker -m app_tests'
 
