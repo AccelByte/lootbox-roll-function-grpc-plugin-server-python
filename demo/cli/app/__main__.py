@@ -56,7 +56,7 @@ def start_testing(user_info, config, category_path="/pythonLootboxRollPluginDemo
 
         # 6.
         print(user_info)
-        print(f"Granting item entitlement to user {user_info.unique_display_name}... ")
+        print(f"Granting item entitlement to user {user_info.user_id}... ")
         entitlement_id, error = pdu.grant_entitlement(user_id=user_info.user_id, item_id=items[0].id, count=1)
         if error:
             print("[ERR]")
