@@ -19,7 +19,7 @@ class Config:
 def get_config():
     load_dotenv()  # Load environment variables from .env file
 
-    required_variables = ['AB_BASE_URL', 'AB_CLIENT_ID', 'AB_CLIENT_SECRET', 'AB_NAMESPACE', 'AB_USERNAME', 'AB_PASSWORD', 'GRPC_SERVER_URL']
+    required_variables = ['AB_BASE_URL', 'AB_CLIENT_ID', 'AB_CLIENT_SECRET', 'AB_NAMESPACE', 'AB_USERNAME', 'AB_PASSWORD', 'GRPC_SERVER_URL', 'EXTEND_APP_NAME']
     missing_variables = []
     config_values = {}
 
@@ -30,8 +30,8 @@ def get_config():
         else:
             config_values[variable] = value
 
-    if missing_variables:
-        raise ValueError(f"Missing environment variables: {', '.join(missing_variables)}")
+    # if missing_variables:
+    #     raise ValueError(f"Missing environment variables: {', '.join(missing_variables)}")
 
     config = Config(**config_values)
     return config
