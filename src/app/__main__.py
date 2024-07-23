@@ -3,13 +3,10 @@
 # and restrictions contact your company contract manager.
 
 import asyncio
-import json
 import logging
 
 from argparse import ArgumentParser
 from enum import IntFlag
-from pathlib import Path
-from typing import Optional
 
 from environs import Env
 
@@ -78,19 +75,19 @@ async def main(port: int, **kwargs) -> None:
             from accelbyte_py_sdk import AccelByteSDK
             from accelbyte_py_sdk.core import MyConfigRepository, InMemoryTokenRepository
             from accelbyte_py_sdk.token_validation.caching import CachingTokenValidator
-            from accelbyte_py_sdk.services.auth import login_client
+            from accelbyte_py_sdk.services.auth import login_client, LoginClientTimer
 
             resource = env("RESOURCE", "ADMIN:NAMESPACE:{namespace}:PLRGRPCSERVICE:CONFIG")
             action = env.int("ACTION", int(PermissionAction.READ | PermissionAction.UPDATE))
 
-            config = MyConfigRepository(
-                base_url, client_id, client_secret, namespace=namespace
-            )
+            config = MyConfigRepository(base_url, client_id, client_secret, namespace)
+            token = InMemoryTokenRepository()
             sdk = AccelByteSDK()
-            sdk.initialize(options={"config": config, "token": InMemoryTokenRepository()})
+            sdk.initialize(options={"config": config, "token": token})
             result, error = login_client(sdk=sdk)
             if error:
                 raise Exception(str(error))
+            sdk.timer = LoginClientTimer(2880, repeats=-1, autostart=True, sdk=sdk)
             token_validator = CachingTokenValidator(sdk)
             auth_server_interceptor = AuthorizationServerInterceptor(
                 resource=resource,
