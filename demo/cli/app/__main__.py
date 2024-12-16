@@ -8,11 +8,13 @@ from .pkg.config import get_config
 from .pkg.demo import PlatformDataUnit
 
 def start_testing(user_info, config, category_path="/pythonLootboxRollPluginDemo"):
+    success: bool = True
     pdu = PlatformDataUnit(
         user_info=user_info, 
         config=config, 
         currency_code="USDT1"
     )
+    # noinspection PyBroadException
     try:
         # 1.
         print("Configuring platform service grpc target... ")
@@ -73,9 +75,10 @@ def start_testing(user_info, config, category_path="/pythonLootboxRollPluginDemo
         print("[OK]")
         lootbox_item_result.write_to_console("    ")
         print("[SUCCESS]")
-    except:
+    except Exception:
         print(traceback.format_exc())
         print("\n[FAILED]")
+        success = False
     finally:
         print("# Cleaning Up")
         print("Deleting currency... ")
@@ -100,6 +103,8 @@ def start_testing(user_info, config, category_path="/pythonLootboxRollPluginDemo
                 return
             print("[OK]")
         print("[CLEAN UP FINISHED]")
+        if not success:
+            exit(1)
 
 def main():
     config = get_config()
