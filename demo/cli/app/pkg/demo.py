@@ -1,7 +1,7 @@
 from .model import SimpleItemInfo, SimpleLootboxItem
 from .utils import random_string
 
-from typing import Tuple, List
+from typing import List
 
 import accelbyte_py_sdk.api.platform as platform_service
 import accelbyte_py_sdk.api.platform.models as platform_models
@@ -152,7 +152,7 @@ class PlatformDataUnit:
                 sku=f"SKU_{item_diff}_{i+1}"
             )
 
-            newItem, error = platform_service.create_item(
+            new_item, error = platform_service.create_item(
                 namespace=self.config.ABNamespace,
                 store_id=self.store_id,
                 body=platform_models.ItemCreate.create(
@@ -177,7 +177,7 @@ class PlatformDataUnit:
             if error:
                 return None, "could not create new store item: " + str(error)
             
-            item_info.id = newItem.item_id
+            item_info.id = new_item.item_id
             items.append(item_info)
                 
         if do_publish:
@@ -208,7 +208,7 @@ class PlatformDataUnit:
                 if error:
                     return None, error
                 
-                reward_box_items : platform_models.BoxItem = list()
+                reward_box_items: List[platform_models.BoxItem] = []
                 for item_info in items:
                     if not item_info.id:
                         return None, ERR_EMPTY_ITEM_ID
@@ -224,7 +224,7 @@ class PlatformDataUnit:
                     odds=0.1,
                     weight=10,
                     type_=platform_models.LootBoxRewardTypeEnum.REWARD,
-                    loot_box_items=reward_box_items
+                    loot_box_items=reward_box_items,
                 )
                 lootbox_rewards.append(lootbox_reward)
 
@@ -299,7 +299,7 @@ class PlatformDataUnit:
             namespace=self.config.ABNamespace,
             entitlement_id=entitlement_id,
             user_id=user_id,
-            body=platform_models.EntitlementDecrement.create(
+            body=platform_models.AdminEntitlementDecrement.create(
                 use_count=count,
                 request_id=random_string(ALPHA_CHARS, 8)
             )
