@@ -2,7 +2,7 @@
 # This is licensed software from AccelByte Inc, for limitations
 # and restrictions contact your company contract manager.
 
-from typing import Awaitable, Callable, List
+from typing import Awaitable, Callable, List, Optional
 
 import grpc
 from grpc import HandlerCallDetails, RpcMethodHandler, StatusCode
@@ -21,8 +21,8 @@ class AuthorizationServerInterceptor(ServerInterceptor):
 
     def __init__(
         self,
-        resource: str,
-        action: int,
+        resource: Optional[str],
+        action: Optional[int],
         namespace: str,
         token_validator: TokenValidatorProtocol,
     ) -> None:

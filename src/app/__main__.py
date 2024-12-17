@@ -77,8 +77,8 @@ async def main(port: int, **kwargs) -> None:
             from accelbyte_py_sdk.token_validation.caching import CachingTokenValidator
             from accelbyte_py_sdk.services.auth import login_client, LoginClientTimer
 
-            resource = env("RESOURCE", "ADMIN:NAMESPACE:{namespace}:PLRGRPCSERVICE:CONFIG")
-            action = env.int("ACTION", int(PermissionAction.READ | PermissionAction.UPDATE))
+            resource = env("RESOURCE", None)
+            action = env.int("ACTION", None)
 
             config = MyConfigRepository(base_url, client_id, client_secret, namespace)
             token = InMemoryTokenRepository()
