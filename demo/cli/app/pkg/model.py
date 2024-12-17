@@ -4,6 +4,7 @@ class SimpleItemInfo:
         self.sku = sku
         self.title = title
 
+
 class SimpleLootboxItem:
     def __init__(self, sku=None, title=None, diff=None, id=None) -> None:
         self.sku = sku
@@ -12,9 +13,9 @@ class SimpleLootboxItem:
         self.id = id
         self.reward_items = None
 
-    def write_to_console(self, indent : str):
+    def write_to_console(self, indent: str):
         print(f"{indent}Lootbox Item ID: {self.id}\n")
         if self.reward_items:
-            print(f"{indent}Reward Items:\n")
+            print(f"{indent}Reward Items [{len(self.reward_items)}]: ")
             for item in self.reward_items:
-                print(f"\t{indent}{item.id} : {item.sku} : {item.title}\n")
+                print(f"\t{indent}{item.id} : {item.sku} : {item.title}")

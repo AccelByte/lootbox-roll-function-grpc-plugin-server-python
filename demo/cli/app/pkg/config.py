@@ -5,21 +5,32 @@
 import os
 from dotenv import load_dotenv
 
+
 class Config:
     def __init__(self, **kwargs):
-        self.ABBaseURL = kwargs.get('AB_BASE_URL')
-        self.ABClientID = kwargs.get('AB_CLIENT_ID')
-        self.ABClientSecret = kwargs.get('AB_CLIENT_SECRET')
-        self.ABNamespace = kwargs.get('AB_NAMESPACE')
-        self.ABUsername = kwargs.get('AB_USERNAME')
-        self.ABPassword = kwargs.get('AB_PASSWORD')
-        self.GRPCServerURL = kwargs.get('GRPC_SERVER_URL')
-        self.ExtendAppName = kwargs.get('EXTEND_APP_NAME', "pythonLootBoxApp")
+        self.ABBaseURL = kwargs.get("AB_BASE_URL")
+        self.ABClientID = kwargs.get("AB_CLIENT_ID")
+        self.ABClientSecret = kwargs.get("AB_CLIENT_SECRET")
+        self.ABNamespace = kwargs.get("AB_NAMESPACE")
+        self.ABUsername = kwargs.get("AB_USERNAME")
+        self.ABPassword = kwargs.get("AB_PASSWORD")
+        self.GRPCServerURL = kwargs.get("GRPC_SERVER_URL")
+        self.ExtendAppName = kwargs.get("EXTEND_APP_NAME", "pythonLootBoxApp")
+
 
 def get_config():
     load_dotenv()  # Load environment variables from .env file
 
-    required_variables = ['AB_BASE_URL', 'AB_CLIENT_ID', 'AB_CLIENT_SECRET', 'AB_NAMESPACE', 'AB_USERNAME', 'AB_PASSWORD', 'GRPC_SERVER_URL', 'EXTEND_APP_NAME']
+    required_variables = [
+        "AB_BASE_URL",
+        "AB_CLIENT_ID",
+        "AB_CLIENT_SECRET",
+        "AB_NAMESPACE",
+        "AB_USERNAME",
+        "AB_PASSWORD",
+        "GRPC_SERVER_URL",
+        "EXTEND_APP_NAME",
+    ]
     missing_variables = []
     config_values = {}
 

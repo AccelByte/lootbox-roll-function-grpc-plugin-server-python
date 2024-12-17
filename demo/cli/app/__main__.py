@@ -7,13 +7,10 @@ import accelbyte_py_sdk.api.iam as iam_service
 from .pkg.config import get_config
 from .pkg.demo import PlatformDataUnit
 
+
 def start_testing(user_info, config, category_path="/pythonLootboxRollPluginDemo"):
     success: bool = True
-    pdu = PlatformDataUnit(
-        user_info=user_info, 
-        config=config, 
-        currency_code="USDT1"
-    )
+    pdu = PlatformDataUnit(user_info=user_info, config=config, currency_code="USDT1")
     # noinspection PyBroadException
     try:
         # 1.
@@ -23,7 +20,7 @@ def start_testing(user_info, config, category_path="/pythonLootboxRollPluginDemo
             print("[ERR]")
             raise Exception(error)
         print("[OK]")
-        
+
         # 2.
         print("Creating store... ")
         error = pdu.create_store(True)
@@ -50,16 +47,23 @@ def start_testing(user_info, config, category_path="/pythonLootboxRollPluginDemo
 
         # 5.
         print("Creating lootbox item(s)... ")
-        items, error = pdu.create_lootbox_items(item_count=1, reward_item_count=5, category_path=category_path, do_publish=True)
+        items, error = pdu.create_lootbox_items(
+            item_count=1,
+            reward_item_count=5,
+            category_path=category_path,
+            do_publish=True,
+        )
         if error:
             print("[ERR]")
             raise Exception(error)
         print("[OK]")
+        items[0].write_to_console("  ")
 
         # 6.
-        print(user_info)
         print(f"Granting item entitlement to user {user_info.user_id}... ")
-        entitlement_id, error = pdu.grant_entitlement(user_id=user_info.user_id, item_id=items[0].id, count=1)
+        entitlement_id, error = pdu.grant_entitlement(
+            user_id=user_info.user_id, item_id=items[0].id, count=1
+        )
         if error:
             print("[ERR]")
             raise Exception(error)
@@ -68,7 +72,9 @@ def start_testing(user_info, config, category_path="/pythonLootboxRollPluginDemo
 
         # 7.
         print("Consuming entitlement... ")
-        lootbox_item_result, error = pdu.consume_item_entitlement(user_id=user_info.user_id, entitlement_id=entitlement_id, count=2)
+        lootbox_item_result, error = pdu.consume_item_entitlement(
+            user_id=user_info.user_id, entitlement_id=entitlement_id, count=2
+        )
         if error:
             print("[ERR]")
             raise Exception(error)
@@ -94,7 +100,7 @@ def start_testing(user_info, config, category_path="/pythonLootboxRollPluginDemo
                 print(error)
                 return
             print("[OK]")
-        
+
         if config.GRPCServerURL:
             print("Unset platform service grpc target... ")
             error = pdu.unset_platform_service_grpc_target()
@@ -106,6 +112,7 @@ def start_testing(user_info, config, category_path="/pythonLootboxRollPluginDemo
         if not success:
             exit(1)
 
+
 def main():
     config = get_config()
 
@@ -113,19 +120,22 @@ def main():
 
     print("# Arrange")
     print("## Login to AccelByte... ")
-    _, error = auth_service.login_user(username=config.ABUsername, password=config.ABPassword)
+    _, error = auth_service.login_user(
+        username=config.ABUsername, password=config.ABPassword
+    )
     if error:
         raise Exception(error)
     print("[OK]")
 
     print("## Get user info")
-    user_info, error = iam_service.public_get_my_user_v3() 
+    user_info, error = iam_service.public_get_my_user_v3()
     if error:
         raise Exception(error)
     print("[OK]")
-    
+
     print("# Test Start")
     start_testing(user_info, config)
-            
+
+
 if __name__ == "__main__":
     main()
