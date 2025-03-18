@@ -1,4 +1,4 @@
-# Copyright (c) 2023 AccelByte Inc. All Rights Reserved.
+# Copyright (c) 2025 AccelByte Inc. All Rights Reserved.
 # This is licensed software from AccelByte Inc, for limitations
 # and restrictions contact your company contract manager.
 
@@ -23,7 +23,6 @@ from accelbyte_grpc_plugin import (
     AppGRPCInterceptorOpt,
     AppGRPCServiceOpt,
 )
-
 from accelbyte_grpc_plugin.utils import instrument_sdk_http_client
 
 from .proto.lootbox_pb2_grpc import add_LootBoxServicer_to_server
@@ -73,7 +72,7 @@ async def main(**kwargs) -> None:
 
     instrument_sdk_http_client(sdk=sdk, logger=logger)
 
-    _, error = auth_service.login_client(sdk=sdk)
+    _, error = await auth_service.login_client_async(sdk=sdk)
     if error:
         raise Exception(str(error))
 
@@ -83,13 +82,14 @@ async def main(**kwargs) -> None:
     opts.append(
         AppGRPCServiceOpt(
             service=AsyncLootBoxService(
+                sdk=sdk,
                 logger=logger,
             ),
             service_full_name=AsyncLootBoxService.full_name,
             add_service_func=add_LootBoxServicer_to_server,
         )
     )
-    
+
     logger.info("setup completed, running interceptors")
 
     await App(port, env, opts=opts).run()
@@ -136,6 +136,7 @@ def create_options(sdk: AccelByteSDK, env: Env, logger: Logger) -> List[AppOpt]:
                 options.append(
                     AppGRPCInterceptorOpt(
                         interceptor=AuthorizationServerInterceptor(
+                            token_validator=CachingTokenValidator(sdk=sdk),
                             resource=env.str(
                                 "RESOURCE", DEFAULT_PLUGIN_GRPC_SERVER_AUTH_RESOURCE
                             ),
@@ -143,7 +144,6 @@ def create_options(sdk: AccelByteSDK, env: Env, logger: Logger) -> List[AppOpt]:
                                 "ACTION", DEFAULT_PLUGIN_GRPC_SERVER_AUTH_ACTION
                             ),
                             namespace=namespace,
-                            token_validator=CachingTokenValidator(sdk=sdk),
                         )
                     )
                 )

@@ -1,4 +1,4 @@
-# Copyright (c) 2023 AccelByte Inc. All Rights Reserved.
+# Copyright (c) 2025 AccelByte Inc. All Rights Reserved.
 # This is licensed software from AccelByte Inc, for limitations
 # and restrictions contact your company contract manager.
 
@@ -9,7 +9,9 @@ from typing import List, Optional
 
 from google.protobuf.json_format import MessageToDict
 
-from app.proto.lootbox_pb2 import (
+from accelbyte_py_sdk import AccelByteSDK
+
+from ..proto.lootbox_pb2 import (
     RollLootBoxRewardsRequest,
     RollLootBoxRewardsResponse,
     RewardObject,
@@ -17,12 +19,14 @@ from app.proto.lootbox_pb2 import (
     BoxItemObject,
     DESCRIPTOR,
 )
-from app.proto.lootbox_pb2_grpc import LootBoxServicer
+from ..proto.lootbox_pb2_grpc import LootBoxServicer
+
 
 class AsyncLootBoxService(LootBoxServicer):
     full_name: str = DESCRIPTOR.services_by_name["LootBox"].full_name
 
-    def __init__(self, logger: Optional[Logger]) -> None:
+    def __init__(self, sdk: Optional[AccelByteSDK] = None, logger: Optional[Logger] = None) -> None:
+        self.sdk = sdk
         self.logger = logger
             
     async def RollLootBoxRewards(self, request: RollLootBoxRewardsRequest, context):
