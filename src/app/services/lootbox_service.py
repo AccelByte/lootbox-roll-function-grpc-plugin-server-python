@@ -4,7 +4,7 @@
 
 import json
 import random
-from logging import Logger, getLogger
+from logging import Logger
 from typing import List, Optional
 
 from google.protobuf.json_format import MessageToDict
@@ -27,34 +27,43 @@ class AsyncLootBoxService(LootBoxServicer):
             
     async def RollLootBoxRewards(self, request: RollLootBoxRewardsRequest, context):
         self.log_payload(f'{self.RollLootBoxRewards.__name__} request: %s', request)
-        final_items: List[RewardObject] = []
+
         rewards: List[LootBoxItemInfo.LootBoxRewardObject] = request.itemInfo.lootBoxRewards
         reward_weight_sum: int = 0
         reward_weight_sum = sum(reward.weight for reward in rewards)
-        for i in range(request.quantity):
-            for sel_idx in range(len(rewards)):
-                r = random.random() * reward_weight_sum
-                r -= rewards[sel_idx].weight
+
+        final_items: List[RewardObject] = []
+        for _ in range(request.quantity):
+            r = random.random() * reward_weight_sum
+
+            selected_index = 0
+            for i in range(len(rewards)):
+                selected_index = i
+                r -= rewards[selected_index].weight
                 if r <= 0.0:
                     break
-            sel_reward: LootBoxItemInfo.LootBoxRewardObject = rewards[sel_idx]
-            item_count: int = len(sel_reward.items)
 
-            sel_item_idx: int = random.randint(0, item_count-1)
-            sel_item: BoxItemObject = sel_reward.items[sel_item_idx]
+            selected_reward: LootBoxItemInfo.LootBoxRewardObject = rewards[selected_index]
+            item_count: int = len(selected_reward.items)
+
+            selected_item_index: int = random.randint(0, item_count-1)
+            selected_item: BoxItemObject = selected_reward.items[selected_item_index]
 
             reward_item: RewardObject = RewardObject(
-                itemId=sel_item.itemId,
-                itemSku=sel_item.itemSku,
-                count=sel_item.count,
+                itemId=selected_item.itemId,
+                itemSku=selected_item.itemSku,
+                count=selected_item.count,
             )
             final_items.append(reward_item)
+
         response: RollLootBoxRewardsResponse = RollLootBoxRewardsResponse(
             rewards=final_items
         )
         self.log_payload(f'{self.RollLootBoxRewards.__name__} response: %s', response)
+
         return response
-    
+
+    # noinspection PyShadowingBuiltins
     def log_payload(self, format : str, payload):
         if not self.logger:
             return
