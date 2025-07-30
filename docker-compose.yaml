@@ -25,5 +25,3 @@ services:
     #     mode: non-blocking
     #     max-buffer-size: 4m
     #     loki-retries: "3"
-
-

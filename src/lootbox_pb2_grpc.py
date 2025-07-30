@@ -2,7 +2,7 @@
 """Client and server classes corresponding to protobuf-defined services."""
 import grpc
 
-from app.proto import lootbox_pb2 as app_dot_proto_dot_lootbox__pb2
+import lootbox_pb2 as lootbox__pb2
 
 
 class LootBoxStub(object):
@@ -16,8 +16,8 @@ class LootBoxStub(object):
         """
         self.RollLootBoxRewards = channel.unary_unary(
                 '/accelbyte.platform.entitlement.lootbox.v1.LootBox/RollLootBoxRewards',
-                request_serializer=app_dot_proto_dot_lootbox__pb2.RollLootBoxRewardsRequest.SerializeToString,
-                response_deserializer=app_dot_proto_dot_lootbox__pb2.RollLootBoxRewardsResponse.FromString,
+                request_serializer=lootbox__pb2.RollLootBoxRewardsRequest.SerializeToString,
+                response_deserializer=lootbox__pb2.RollLootBoxRewardsResponse.FromString,
                 )
 
 
@@ -37,8 +37,8 @@ def add_LootBoxServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'RollLootBoxRewards': grpc.unary_unary_rpc_method_handler(
                     servicer.RollLootBoxRewards,
-                    request_deserializer=app_dot_proto_dot_lootbox__pb2.RollLootBoxRewardsRequest.FromString,
-                    response_serializer=app_dot_proto_dot_lootbox__pb2.RollLootBoxRewardsResponse.SerializeToString,
+                    request_deserializer=lootbox__pb2.RollLootBoxRewardsRequest.FromString,
+                    response_serializer=lootbox__pb2.RollLootBoxRewardsResponse.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -62,7 +62,7 @@ class LootBox(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/accelbyte.platform.entitlement.lootbox.v1.LootBox/RollLootBoxRewards',
-            app_dot_proto_dot_lootbox__pb2.RollLootBoxRewardsRequest.SerializeToString,
-            app_dot_proto_dot_lootbox__pb2.RollLootBoxRewardsResponse.FromString,
+            lootbox__pb2.RollLootBoxRewardsRequest.SerializeToString,
+            lootbox__pb2.RollLootBoxRewardsResponse.FromString,
             options, channel_credentials,
             insecure, call_credentials, compression, wait_for_ready, timeout, metadata)

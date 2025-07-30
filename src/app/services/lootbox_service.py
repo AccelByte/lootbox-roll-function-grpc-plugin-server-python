@@ -11,7 +11,7 @@ from google.protobuf.json_format import MessageToDict
 
 from accelbyte_py_sdk import AccelByteSDK
 
-from ..proto.lootbox_pb2 import (
+from lootbox_pb2 import (
     RollLootBoxRewardsRequest,
     RollLootBoxRewardsResponse,
     RewardObject,
@@ -19,7 +19,7 @@ from ..proto.lootbox_pb2 import (
     BoxItemObject,
     DESCRIPTOR,
 )
-from ..proto.lootbox_pb2_grpc import LootBoxServicer
+from lootbox_pb2_grpc import LootBoxServicer
 
 
 class AsyncLootBoxService(LootBoxServicer):

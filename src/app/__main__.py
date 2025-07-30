@@ -26,7 +26,7 @@ from accelbyte_grpc_plugin import (
 )
 from accelbyte_grpc_plugin.utils import instrument_sdk_http_client
 
-from .proto.lootbox_pb2_grpc import add_LootBoxServicer_to_server
+from lootbox_pb2_grpc import add_LootBoxServicer_to_server
 from .services.lootbox_service import AsyncLootBoxService
 from .utils import create_env
 
