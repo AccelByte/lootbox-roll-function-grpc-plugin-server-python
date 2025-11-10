@@ -6,7 +6,7 @@ import threading
 
 from flask import Flask
 from opentelemetry.exporter.prometheus import PrometheusMetricReader
-from prometheus_client import start_http_server, make_wsgi_app
+from prometheus_client import make_wsgi_app
 from werkzeug.middleware.dispatcher import DispatcherMiddleware
 
 from accelbyte_grpc_plugin import App, AppOptABC, AppOptOrder
@@ -34,4 +34,4 @@ class PrometheusOpt(AppOptABC):
                     use_reloader=False,
                 )
             ).start()
-            app.otel_metric_readers.append(PrometheusMetricReader(prefix=prefix))
+            app.otel_metric_readers.append(PrometheusMetricReader(prefix))
